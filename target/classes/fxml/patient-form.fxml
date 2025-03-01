@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pharmacymanagement.controller.PatientFormController"
+      spacing="15.0" styleClass="form-container">
+    
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+    </padding>
+
+    <Label text="Patient Information" styleClass="form-title"/>
+
+    <GridPane hgap="15.0" vgap="15.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="120.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0"/>
+            <ColumnConstraints hgrow="NEVER" minWidth="120.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0"/>
+        </columnConstraints>
+
+        <!-- Personal Information -->
+        <Label text="First Name *" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="firstNameField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Last Name *" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <TextField fx:id="lastNameField" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+        <Label text="Date of Birth" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <DatePicker fx:id="dateOfBirthPicker" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Gender" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="genderComboBox" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+
+        <!-- Contact Information -->
+        <Label text="Phone Number *" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="phoneNumberField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Email" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+        <TextField fx:id="emailField" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+        <Label text="Address" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3"/>
+
+        <!-- Medical Information -->
+        <Label text="Allergies" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextArea fx:id="allergiesArea" prefRowCount="3" wrapText="true"
+                  GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
+
+        <Label text="Medical History" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <TextArea fx:id="medicalHistoryArea" prefRowCount="3" wrapText="true"
+                  GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5"/>
+    </GridPane>
+
+    <!-- Error Label -->
+    <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
+
+    <!-- Buttons -->
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#handleCancel" styleClass="button-secondary"/>
+        <Button text="Save" onAction="#handleSave" styleClass="button-primary" defaultButton="true"/>
+    </HBox>
+</VBox>
