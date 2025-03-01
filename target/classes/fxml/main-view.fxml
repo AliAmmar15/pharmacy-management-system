@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pharmacymanagement.controller.MainController"
+      prefHeight="800.0" prefWidth="1200.0"
+      stylesheets="@../css/styles.css">
+    
+    <MenuBar>
+        <menus>
+            <Menu text="File">
+                <items>
+                    <MenuItem text="Settings" onAction="#handleSettings"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Exit" onAction="#handleExit"/>
+                </items>
+            </Menu>
+            <Menu text="Inventory">
+                <items>
+                    <MenuItem text="Add Medicine" onAction="#handleAddMedicine"/>
+                    <MenuItem text="View Inventory" onAction="#handleViewInventory"/>
+                    <MenuItem text="Stock Alerts" onAction="#handleStockAlerts"/>
+                </items>
+            </Menu>
+            <Menu text="Sales">
+                <items>
+                    <MenuItem text="New Sale" onAction="#handleNewSale"/>
+                    <MenuItem text="Sales History" onAction="#handleSalesHistory"/>
+                </items>
+            </Menu>
+            <Menu text="Patients">
+                <items>
+                    <MenuItem text="Add Patient" onAction="#handleAddPatient"/>
+                    <MenuItem text="View Patients" onAction="#handleViewPatients"/>
+                </items>
+            </Menu>
+            <Menu text="Reports">
+                <items>
+                    <MenuItem text="Sales Report" onAction="#handleSalesReport"/>
+                    <MenuItem text="Inventory Report" onAction="#handleInventoryReport"/>
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
+
+    <TabPane VBox.vgrow="ALWAYS">
+        <tabs>
+            <Tab text="Dashboard" closable="false">
+                <content>
+                    <ScrollPane fitToWidth="true" fitToHeight="true">
+                        <VBox spacing="20.0">
+                            <padding>
+                                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                            </padding>
+
+                            <!-- Dashboard Header -->
+                            <HBox spacing="20.0" alignment="CENTER_LEFT">
+                                <Label text="Pharmacy Dashboard" styleClass="dashboard-header"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="currentTimeLabel" styleClass="time-label"/>
+                            </HBox>
+
+                            <!-- Main Content Grid -->
+                            <GridPane hgap="20.0" vgap="20.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" prefWidth="350.0"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="400.0" prefWidth="450.0"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="300.0" prefWidth="350.0"/>
+                                </columnConstraints>
+                                
+                                <!-- Quick Actions Card -->
+                                <VBox styleClass="dashboard-card" GridPane.columnIndex="0" 
+                                      GridPane.rowIndex="0" spacing="15.0">
+                                    <padding>
+                                        <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                                    </padding>
+                                    <Label text="Quick Actions" styleClass="card-title"/>
+                                    <Button text="New Sale" onAction="#handleNewSale" 
+                                            maxWidth="Infinity" styleClass="action-button"/>
+                                    <Button text="Add Medicine" onAction="#handleAddMedicine" 
+                                            maxWidth="Infinity" styleClass="action-button"/>
+                                    <Button text="Add Patient" onAction="#handleAddPatient" 
+                                            maxWidth="Infinity" styleClass="action-button"/>
+                                    <Button text="View Inventory" onAction="#handleViewInventory" 
+                                            maxWidth="Infinity" styleClass="action-button"/>
+                                </VBox>
+
+                                <!-- Low Stock Alerts Card -->
+                                <VBox styleClass="dashboard-card" GridPane.columnIndex="1" 
+                                      GridPane.rowIndex="0" spacing="10.0">
+                                    <padding>
+                                        <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                                    </padding>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <Label text="Low Stock Alerts" styleClass="card-title"/>
+                                        <Label fx:id="lowStockCount" text="(0)" styleClass="alert-count"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Button text="View All" onAction="#handleViewInventory" 
+                                                styleClass="link-button"/>
+                                    </HBox>
+                                    <TableView fx:id="lowStockTable" VBox.vgrow="ALWAYS" 
+                                             minHeight="300.0">
+                                        <columns>
+                                            <TableColumn fx:id="lowStockNameColumn" 
+                                                        text="Medicine Name" prefWidth="200.0"/>
+                                            <TableColumn fx:id="lowStockQuantityColumn" 
+                                                        text="Current Stock" prefWidth="100.0"/>
+                                            <TableColumn fx:id="lowStockMinimumColumn" 
+                                                        text="Min. Level" prefWidth="100.0"/>
+                                        </columns>
+                                        <placeholder>
+                                            <Label text="No low stock items" 
+                                                   styleClass="placeholder-text"/>
+                                        </placeholder>
+                                    </TableView>
+                                </VBox>
+
+                                <!-- Recent Sales Card -->
+                                <VBox styleClass="dashboard-card" GridPane.columnIndex="2" 
+                                      GridPane.rowIndex="0" spacing="10.0">
+                                    <padding>
+                                        <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                                    </padding>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <Label text="Recent Sales" styleClass="card-title"/>
+                                        <Label fx:id="todaysSalesCount" text="(0 today)" 
+                                               styleClass="count-label"/>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <Button text="View All" onAction="#handleSalesHistory" 
+                                                styleClass="link-button"/>
+                                    </HBox>
+                                    <TableView fx:id="recentSalesTable" VBox.vgrow="ALWAYS" 
+                                             minHeight="300.0">
+                                        <columns>
+                                            <TableColumn fx:id="saleTimeColumn" 
+                                                        text="Time" prefWidth="100.0"/>
+                                            <TableColumn fx:id="saleAmountColumn" 
+                                                        text="Amount" prefWidth="100.0"/>
+                                            <TableColumn fx:id="saleItemsColumn" 
+                                                        text="Items" prefWidth="150.0"/>
+                                        </columns>
+                                        <placeholder>
+                                            <Label text="No recent sales" 
+                                                   styleClass="placeholder-text"/>
+                                        </placeholder>
+                                    </TableView>
+                                </VBox>
+                            </GridPane>
+                        </VBox>
+                    </ScrollPane>
+                </content>
+            </Tab>
+        </tabs>
+    </TabPane>
+
+    <!-- Status Bar -->
+    <HBox styleClass="status-bar" spacing="15.0">
+        <padding>
+            <Insets top="8.0" right="15.0" bottom="8.0" left="15.0"/>
+        </padding>
+        <Label fx:id="statusLabel" text="Ready" HBox.hgrow="ALWAYS"/>
+        <Separator orientation="VERTICAL"/>
+        <Label fx:id="userLabel" text="User: AliAmmar15"/>
+    </HBox>
+</VBox>

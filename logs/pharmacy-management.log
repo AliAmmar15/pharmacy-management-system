@@ -1,0 +1,34 @@
+2025-03-01 00:20:21 [JavaFX Application Thread] INFO  c.p.util.DatabaseUtil - Database connection established
+2025-03-01 00:20:21 [JavaFX Application Thread] INFO  c.p.util.DatabaseUtil - Database schema initialized successfully
+2025-03-01 00:20:21 [JavaFX Application Thread] ERROR c.pharmacymanagement.MainApplication - Error starting application
+javafx.fxml.LoadException: 
+/C:/Users/aamma/Documents/pharmacy-management-system/target/classes/fxml/main-view.fxml:92
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2707)
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2685)
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2548)
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2516)
+	at com.pharmacymanagement.MainApplication.start(MainApplication.java:22)
+	at javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:847)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:484)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:457)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:456)
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:96)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:184)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.lang.IllegalArgumentException: Unable to coerce 10 to class javafx.geometry.Insets.
+	at javafx.fxml/com.sun.javafx.fxml.BeanAdapter.coerce(BeanAdapter.java:497)
+	at javafx.fxml/com.sun.javafx.fxml.BeanAdapter.put(BeanAdapter.java:259)
+	at javafx.fxml/com.sun.javafx.fxml.BeanAdapter.put(BeanAdapter.java:54)
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.applyProperty(FXMLLoader.java:523)
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.processValue(FXMLLoader.java:373)
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.processPropertyAttribute(FXMLLoader.java:335)
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.processInstancePropertyAttributes(FXMLLoader.java:245)
+	at javafx.fxml/javafx.fxml.FXMLLoader$ValueElement.processEndElement(FXMLLoader.java:778)
+	at javafx.fxml/javafx.fxml.FXMLLoader.processEndElement(FXMLLoader.java:2924)
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2639)
+	... 12 common frames omitted
+2025-03-01 00:20:21 [JavaFX Application Thread] INFO  c.p.util.DatabaseUtil - Database connection closed
+2025-03-01 00:20:21 [JavaFX Application Thread] INFO  c.pharmacymanagement.MainApplication - Application stopped
