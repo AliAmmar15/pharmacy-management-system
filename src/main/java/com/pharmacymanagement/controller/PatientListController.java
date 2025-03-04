@@ -17,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class PatientListController {
@@ -27,10 +25,13 @@ public class PatientListController {
 
     @FXML private TableView<Patient> patientTable;
     @FXML private TableColumn<Patient, Long> idColumn;
-    @FXML private TableColumn<Patient, String> nameColumn;
-    @FXML private TableColumn<Patient, String> phoneColumn;
+    @FXML private TableColumn<Patient, String> firstNameColumn;
+    @FXML private TableColumn<Patient, String> lastNameColumn;
     @FXML private TableColumn<Patient, String> emailColumn;
-    @FXML private TableColumn<Patient, LocalDate> dobColumn;
+    @FXML private TableColumn<Patient, String> phoneNumberColumn;
+    @FXML private TableColumn<Patient, LocalDate> dateOfBirthColumn;
+    @FXML private TableColumn<Patient, String> allergiesColumn;
+    @FXML private TableColumn<Patient, String> medicalHistoryColumn;
     @FXML private TableColumn<Patient, Void> actionsColumn;
     @FXML private TextField searchField;
     @FXML private Label statusLabel;
@@ -47,29 +48,13 @@ public class PatientListController {
 
     private void setupTableColumns() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("patientId"));
-        nameColumn.setCellValueFactory(cellData -> 
-            javafx.beans.binding.Bindings.createStringBinding(
-                () -> cellData.getValue().getFirstName() + " " + cellData.getValue().getLastName()
-            )
-        );
-        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
+        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        dobColumn.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
-        
-        // Format date of birth
-        dobColumn.setCellFactory(column -> new TableCell<>() {
-            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            @Override
-            protected void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                if (empty || date == null) {
-                    setText(null);
-                } else {
-                    setText(formatter.format(date));
-                }
-            }
-        });
+        phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
+        dateOfBirthColumn.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
+        allergiesColumn.setCellValueFactory(new PropertyValueFactory<>("allergies"));
+        medicalHistoryColumn.setCellValueFactory(new PropertyValueFactory<>("medicalHistory"));
 
         // Setup actions column
         actionsColumn.setCellFactory(column -> new TableCell<>() {
@@ -80,7 +65,7 @@ public class PatientListController {
             {
                 editButton.getStyleClass().add("button-secondary");
                 deleteButton.getStyleClass().add("button-danger");
-                
+
                 editButton.setOnAction(event -> {
                     Patient patient = getTableRow().getItem();
                     if (patient != null) {
@@ -117,11 +102,9 @@ public class PatientListController {
                     }
 
                     String lowerCaseFilter = newValue.toLowerCase();
-                    return patient.getFirstName().toLowerCase().contains(lowerCaseFilter)
-                        || patient.getLastName().toLowerCase().contains(lowerCaseFilter)
-                        || patient.getPhoneNumber().toLowerCase().contains(lowerCaseFilter)
-                        || (patient.getEmail() != null && 
-                            patient.getEmail().toLowerCase().contains(lowerCaseFilter));
+                    return patient.getFullName().toLowerCase().contains(lowerCaseFilter)
+                            || patient.getEmail().toLowerCase().contains(lowerCaseFilter)
+                            || patient.getPhoneNumber().toLowerCase().contains(lowerCaseFilter);
                 });
                 updateTotalPatientsLabel();
             }
@@ -141,41 +124,20 @@ public class PatientListController {
         }
     }
 
-    @FXML
-    private void handleAddNewPatient() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-form.fxml"));
-            Parent root = loader.load();
-            
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Add New Patient");
-            stage.setScene(new Scene(root));
-            
-            PatientFormController controller = loader.getController();
-            controller.setOnSaveCallback(this::onPatientSaved);
-            
-            stage.showAndWait();
-        } catch (IOException e) {
-            logger.error("Error opening patient form", e);
-            updateStatus("Error opening patient form: " + e.getMessage());
-        }
-    }
-
     private void handleEditPatient(Patient patient) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-form.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Edit Patient");
             stage.setScene(new Scene(root));
-            
+
             PatientFormController controller = loader.getController();
             controller.setPatient(patient);
-            controller.setOnSaveCallback(this::onPatientSaved);
-            
+            controller.setOnSaveCallback(this::loadPatients);
+
             stage.showAndWait();
         } catch (IOException e) {
             logger.error("Error opening patient form", e);
@@ -199,11 +161,6 @@ public class PatientListController {
                 updateStatus("Error deleting patient: " + e.getMessage());
             }
         }
-    }
-
-    private void onPatientSaved() {
-        loadPatients();
-        updateStatus("Patient saved successfully");
     }
 
     private void updateStatus(String message) {

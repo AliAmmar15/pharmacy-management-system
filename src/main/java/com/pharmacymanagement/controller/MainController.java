@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
-    
+
     @FXML private Label statusLabel;
     @FXML private Label userLabel;
     @FXML private Label dateTimeLabel;
@@ -55,19 +55,19 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-list.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = new Stage();
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setTitle("Patient Management");
             stage.setScene(new Scene(root));
-            
+
             // Set minimum window size
             stage.setMinWidth(900);
             stage.setMinHeight(600);
-            
+
             stage.show();
             updateStatus("Opened patient management");
-            
+
         } catch (IOException e) {
             logger.error("Error opening patient management", e);
             updateStatus("Error opening patient management");
@@ -79,17 +79,17 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/patient-form.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Patient");
             stage.setScene(new Scene(root));
-            
+
             PatientFormController controller = loader.getController();
             controller.setOnSaveCallback(() -> updateStatus("Patient added successfully"));
-            
+
             stage.showAndWait();
-            
+
         } catch (IOException e) {
             logger.error("Error opening patient form", e);
             updateStatus("Error opening patient form");
@@ -98,16 +98,55 @@ public class MainController {
 
     @FXML
     private void handleManageMedicines() {
-        updateStatus("Medicine management - Coming soon");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/medicine-list.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Medicine Management");
+            stage.setScene(new Scene(root));
+
+            // Set minimum window size
+            stage.setMinWidth(900);
+            stage.setMinHeight(600);
+
+            stage.show();
+            updateStatus("Opened medicine management");
+
+        } catch (IOException e) {
+            logger.error("Error opening medicine management", e);
+            updateStatus("Error opening medicine management");
+        }
     }
 
     @FXML
     private void handleViewInventory() {
-        updateStatus("Inventory management - Coming soon");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/inventory-list.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Inventory Management");
+            stage.setScene(new Scene(root));
+
+            // Set minimum window size
+            stage.setMinWidth(900);
+            stage.setMinHeight(600);
+
+            stage.show();
+            updateStatus("Opened inventory management");
+
+        } catch (IOException e) {
+            logger.error("Error opening inventory management", e);
+            updateStatus("Error opening inventory management");
+        }
     }
 
     @FXML
     private void handleViewReports() {
+        // Placeholder for the Reports feature
         updateStatus("Reports - Coming soon");
     }
 

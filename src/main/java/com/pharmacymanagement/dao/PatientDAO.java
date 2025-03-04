@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,8 @@ public class PatientDAO {
     private static final Logger logger = LoggerFactory.getLogger(PatientDAO.class);
 
     public Patient save(Patient patient) {
-        String sql = "INSERT INTO patients (first_name, last_name, email, phone_number, address, " +
-                    "date_of_birth, gender, allergies, medical_history) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO patients (first_name, last_name, email, phone_number, date_of_birth, allergies, medical_history) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -25,12 +25,9 @@ public class PatientDAO {
             pstmt.setString(2, patient.getLastName());
             pstmt.setString(3, patient.getEmail());
             pstmt.setString(4, patient.getPhoneNumber());
-            pstmt.setString(5, patient.getAddress());
-            pstmt.setDate(6, patient.getDateOfBirth() != null ? 
-                         Date.valueOf(patient.getDateOfBirth()) : null);
-            pstmt.setString(7, patient.getGender());
-            pstmt.setString(8, patient.getAllergies());
-            pstmt.setString(9, patient.getMedicalHistory());
+            pstmt.setDate(5, Date.valueOf(patient.getDateOfBirth()));
+            pstmt.setString(6, patient.getAllergies());
+            pstmt.setString(7, patient.getMedicalHistory());
 
             int affectedRows = pstmt.executeUpdate();
 
@@ -52,10 +49,8 @@ public class PatientDAO {
     }
 
     public void update(Patient patient) {
-        String sql = "UPDATE patients SET first_name = ?, last_name = ?, email = ?, " +
-                    "phone_number = ?, address = ?, date_of_birth = ?, gender = ?, " +
-                    "allergies = ?, medical_history = ?, updated_at = CURRENT_TIMESTAMP " +
-                    "WHERE patient_id = ?";
+        String sql = "UPDATE patients SET first_name = ?, last_name = ?, email = ?, phone_number = ?, " +
+                    "date_of_birth = ?, allergies = ?, medical_history = ? WHERE patient_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -64,13 +59,10 @@ public class PatientDAO {
             pstmt.setString(2, patient.getLastName());
             pstmt.setString(3, patient.getEmail());
             pstmt.setString(4, patient.getPhoneNumber());
-            pstmt.setString(5, patient.getAddress());
-            pstmt.setDate(6, patient.getDateOfBirth() != null ? 
-                         Date.valueOf(patient.getDateOfBirth()) : null);
-            pstmt.setString(7, patient.getGender());
-            pstmt.setString(8, patient.getAllergies());
-            pstmt.setString(9, patient.getMedicalHistory());
-            pstmt.setLong(10, patient.getPatientId());
+            pstmt.setDate(5, Date.valueOf(patient.getDateOfBirth()));
+            pstmt.setString(6, patient.getAllergies());
+            pstmt.setString(7, patient.getMedicalHistory());
+            pstmt.setLong(8, patient.getPatientId());
 
             pstmt.executeUpdate();
             logger.info("Patient updated successfully: {}", patient.getFullName());
@@ -103,7 +95,7 @@ public class PatientDAO {
     }
 
     public List<Patient> findAll() {
-        String sql = "SELECT * FROM patients ORDER BY last_name, first_name";
+        String sql = "SELECT * FROM patients ORDER BY first_name, last_name";
         List<Patient> patients = new ArrayList<>();
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -145,27 +137,10 @@ public class PatientDAO {
         patient.setLastName(rs.getString("last_name"));
         patient.setEmail(rs.getString("email"));
         patient.setPhoneNumber(rs.getString("phone_number"));
-        patient.setAddress(rs.getString("address"));
-        
-        Date dob = rs.getDate("date_of_birth");
-        if (dob != null) {
-            patient.setDateOfBirth(dob.toLocalDate());
-        }
-        
-        patient.setGender(rs.getString("gender"));
+        patient.setDateOfBirth(rs.getDate("date_of_birth").toLocalDate());
         patient.setAllergies(rs.getString("allergies"));
         patient.setMedicalHistory(rs.getString("medical_history"));
-        
-        Timestamp createdAt = rs.getTimestamp("created_at");
-        if (createdAt != null) {
-            patient.setCreatedAt(createdAt.toLocalDateTime());
-        }
-        
-        Timestamp updatedAt = rs.getTimestamp("updated_at");
-        if (updatedAt != null) {
-            patient.setUpdatedAt(updatedAt.toLocalDateTime());
-        }
-        
+
         return patient;
     }
 }

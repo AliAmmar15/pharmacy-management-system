@@ -5,15 +5,17 @@ import com.pharmacymanagement.model.Medicine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class MedicineService {
     private static final Logger logger = LoggerFactory.getLogger(MedicineService.class);
-    private final MedicineDAO medicineDAO = new MedicineDAO();
+    private final MedicineDAO medicineDAO;
+
+    public MedicineService() {
+        this.medicineDAO = new MedicineDAO();
+    }
 
     public Medicine addMedicine(Medicine medicine) {
         validateMedicine(medicine);
@@ -25,23 +27,42 @@ public class MedicineService {
         medicineDAO.update(medicine);
     }
 
-    public Medicine getMedicineById(Long medicineId) {
-        return medicineDAO.findById(medicineId)
-            .orElseThrow(() -> new RuntimeException("Medicine not found with id: " + medicineId));
+    public Optional<Medicine> getMedicineById(Long id) {
+        return medicineDAO.findById(id);
     }
 
     public List<Medicine> getAllMedicines() {
         return medicineDAO.findAll();
     }
 
-    public void deleteMedicine(Long medicineId) {
-        medicineDAO.delete(medicineId);
-        logger.info("Medicine deleted with ID: {}", medicineId);
+    public void deleteMedicine(Long id) {
+        medicineDAO.delete(id);
     }
 
-    private boolean validateMedicine(Medicine medicine) {
-        if (medicine == null) return false;
-        return medicine.getMedicineId() != null; // Changed getId() to getMedicineId()
+    private void validateMedicine(Medicine medicine) {
+        if (medicine.getName() == null || medicine.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Medicine name is required");
+        }
+
+        if (medicine.getGenericName() == null || medicine.getGenericName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Generic name is required");
+        }
+
+        if (medicine.getUnitPrice() < 0) {
+            throw new IllegalArgumentException("Unit price cannot be negative");
+        }
+
+        if (medicine.getStockQuantity() < 0) {
+            throw new IllegalArgumentException("Stock quantity cannot be negative");
+        }
+
+        if (medicine.getExpiryDate() != null && medicine.getExpiryDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Expiry date cannot be in the past");
+        }
+
+        if (medicine.getMinimumStockLevel() < 0) {
+            throw new IllegalArgumentException("Minimum stock level cannot be negative");
+        }
     }
 
     public List<Medicine> getLowStockMedicines() {
@@ -56,24 +77,5 @@ public class MedicineService {
                 .filter(m -> m.getExpiryDate() != null && 
                            !m.getExpiryDate().isAfter(thresholdDate))
                 .toList();
-    }
-
-    public void updateStock(Long medicineId, int quantityChange) {
-        Medicine medicine = getMedicineById(medicineId);
-        if (medicine != null) {
-            medicine.setStockQuantity(medicine.getStockQuantity() + quantityChange);
-            saveMedicine(medicine);
-            logger.info("Stock updated for medicine: {}", medicine.getName());
-        }
-    }
-
-    public void saveMedicine(Medicine medicine) {
-        validateMedicine(medicine);
-        if (medicine.getMedicineId() == null) {
-            medicineDAO.save(medicine);
-        } else {
-            medicineDAO.update(medicine);
-        }
-        logger.info("Medicine saved: {}", medicine.getName());
     }
 }

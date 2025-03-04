@@ -6,41 +6,52 @@
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.pharmacymanagement.controller.InventoryController"
-      spacing="10.0">
-
+      fx:controller="com.pharmacymanagement.controller.InventoryFormController"
+      spacing="15.0" styleClass="form-container">
+    
     <padding>
         <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
     </padding>
 
-    <!-- Top Controls -->
-    <HBox spacing="10.0" alignment="CENTER_LEFT">
-        <TextField fx:id="searchField" promptText="Search medicines..." HBox.hgrow="ALWAYS"/>
-        <ComboBox fx:id="categoryFilter" promptText="Filter by Category"/>
-        <Button text="Add Medicine" onAction="#handleAddMedicine" styleClass="button-primary"/>
-        <Button text="Refresh" onAction="#handleRefresh" styleClass="button-secondary"/>
-    </HBox>
+    <Label text="Inventory Information" styleClass="form-title"/>
 
-    <!-- Main Table -->
-    <TableView fx:id="medicineTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
-            <TableColumn fx:id="nameColumn" text="Name" prefWidth="150"/>
-            <TableColumn fx:id="genericNameColumn" text="Generic Name" prefWidth="150"/>
-            <TableColumn fx:id="categoryColumn" text="Category" prefWidth="100"/>
-            <TableColumn fx:id="manufacturerColumn" text="Manufacturer" prefWidth="150"/>
-            <TableColumn fx:id="stockColumn" text="Stock" prefWidth="80"/>
-            <TableColumn fx:id="unitPriceColumn" text="Unit Price" prefWidth="100"/>
-            <TableColumn fx:id="expiryDateColumn" text="Expiry Date" prefWidth="100"/>
-            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
-        </columns>
-    </TableView>
+    <GridPane hgap="15.0" vgap="15.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="NEVER" minWidth="120.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0"/>
+            <ColumnConstraints hgrow="NEVER" minWidth="120.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0"/>
+        </columnConstraints>
 
-    <!-- Bottom Status Bar -->
-    <HBox spacing="10.0" styleClass="status-bar">
-        <Label fx:id="totalItemsLabel" text="Total Items: 0"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label fx:id="lowStockLabel" text="Low Stock Items: 0" styleClass="warning-text"/>
-        <Label fx:id="statusLabel" text="Ready"/>
+        <!-- Inventory Details -->
+        <Label text="Medicine Name" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="medicineNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" editable="false"/>
+
+        <Label text="Generic Name" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <TextField fx:id="genericNameField" GridPane.columnIndex="3" GridPane.rowIndex="0" editable="false"/>
+
+        <Label text="Manufacturer" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="manufacturerField" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="false"/>
+
+        <Label text="Current Stock" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+        <TextField fx:id="currentStockField" GridPane.columnIndex="3" GridPane.rowIndex="1" editable="false"/>
+
+        <Label text="Add Stock" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="addStockField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Batch Number" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+        <TextField fx:id="batchNumberField" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+
+        <Label text="Expiry Date" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <DatePicker fx:id="expiryDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <!-- Error Label -->
+    <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
+
+    <!-- Buttons -->
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#handleCancel" styleClass="button-secondary"/>
+        <Button text="Save" onAction="#handleSave" styleClass="button-primary" defaultButton="true"/>
     </HBox>
 </VBox>

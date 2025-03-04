@@ -5,9 +5,9 @@ import com.pharmacymanagement.util.DatabaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class MedicineDAO {
             pstmt.setString(2, medicine.getGenericName());
             pstmt.setString(3, medicine.getManufacturer());
             pstmt.setString(4, medicine.getCategory());
-            pstmt.setBigDecimal(5, medicine.getUnitPrice());
+            pstmt.setDouble(5, medicine.getUnitPrice());
             pstmt.setInt(6, medicine.getStockQuantity());
             pstmt.setInt(7, medicine.getMinimumStockLevel());
             pstmt.setDate(8, medicine.getExpiryDate() != null ? 
@@ -66,7 +66,7 @@ public class MedicineDAO {
             pstmt.setString(2, medicine.getGenericName());
             pstmt.setString(3, medicine.getManufacturer());
             pstmt.setString(4, medicine.getCategory());
-            pstmt.setBigDecimal(5, medicine.getUnitPrice());
+            pstmt.setDouble(5, medicine.getUnitPrice());
             pstmt.setInt(6, medicine.getStockQuantity());
             pstmt.setInt(7, medicine.getMinimumStockLevel());
             pstmt.setDate(8, medicine.getExpiryDate() != null ? 
@@ -147,27 +147,27 @@ public class MedicineDAO {
         medicine.setGenericName(rs.getString("generic_name"));
         medicine.setManufacturer(rs.getString("manufacturer"));
         medicine.setCategory(rs.getString("category"));
-        medicine.setUnitPrice(rs.getBigDecimal("unit_price"));
+        medicine.setUnitPrice(rs.getDouble("unit_price"));
         medicine.setStockQuantity(rs.getInt("stock_quantity"));
         medicine.setMinimumStockLevel(rs.getInt("minimum_stock_level"));
-        
+
         Date expiryDate = rs.getDate("expiry_date");
         if (expiryDate != null) {
             medicine.setExpiryDate(expiryDate.toLocalDate());
         }
-        
+
         medicine.setBatchNumber(rs.getString("batch_number"));
-        
+
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
             medicine.setCreatedAt(createdAt.toLocalDateTime());
         }
-        
+
         Timestamp updatedAt = rs.getTimestamp("updated_at");
         if (updatedAt != null) {
             medicine.setUpdatedAt(updatedAt.toLocalDateTime());
         }
-        
+
         return medicine;
     }
 }

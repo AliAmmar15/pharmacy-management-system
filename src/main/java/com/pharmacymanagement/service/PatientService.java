@@ -39,27 +39,32 @@ public class PatientService {
     }
 
     private void validatePatient(Patient patient) {
-        if (patient.getFirstName() == null || patient.getFirstName().trim().isEmpty()) {
-            throw new IllegalArgumentException("First name is required");
+        if (patient.getName() == null || patient.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Patient name is required");
         }
 
-        if (patient.getLastName() == null || patient.getLastName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Last name is required");
+        if (patient.getAge() < 0) {
+            throw new IllegalArgumentException("Patient age cannot be negative");
         }
 
-        if (patient.getPhoneNumber() == null || patient.getPhoneNumber().trim().isEmpty()) {
-            throw new IllegalArgumentException("Phone number is required");
+        if (patient.getGender() == null || patient.getGender().trim().isEmpty()) {
+            throw new IllegalArgumentException("Patient gender is required");
         }
 
-        // Email validation (basic)
-        if (patient.getEmail() != null && !patient.getEmail().isEmpty() && 
-            !patient.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            throw new IllegalArgumentException("Invalid email format");
+        if (patient.getContactNumber() == null || patient.getContactNumber().trim().isEmpty()) {
+            throw new IllegalArgumentException("Patient contact number is required");
         }
 
-        // Phone validation (basic)
-        if (!patient.getPhoneNumber().matches("^[0-9()-+\\s]*$")) {
-            throw new IllegalArgumentException("Invalid phone number format");
+                if (patient.getAddress() == null || patient.getAddress().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Patient address is required");
+                }
+            }
         }
+
+public class Patient {
+    private String contactNumber;
+
+    public String getContactNumber() {
+        return contactNumber;
     }
 }

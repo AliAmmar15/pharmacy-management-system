@@ -25,10 +25,11 @@
     <TableView fx:id="patientTable" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
-            <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
-            <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="120"/>
-            <TableColumn fx:id="emailColumn" text="Email" prefWidth="200"/>
-            <TableColumn fx:id="dobColumn" text="Date of Birth" prefWidth="120"/>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="150"/>
+            <TableColumn fx:id="ageColumn" text="Age" prefWidth="60"/>
+            <TableColumn fx:id="genderColumn" text="Gender" prefWidth="80"/>
+            <TableColumn fx:id="contactNumberColumn" text="Contact Number" prefWidth="120"/>
+            <TableColumn fx:id="addressColumn" text="Address" prefWidth="200"/>
             <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
         </columns>
         <placeholder>

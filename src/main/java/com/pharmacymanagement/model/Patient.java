@@ -5,15 +5,11 @@ import java.time.LocalDateTime;
 
 public class Patient {
     private Long patientId;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private String address;
-    private LocalDate dateOfBirth;
+    private String name;
+    private int age;
     private String gender;
-    private String allergies;
-    private String medicalHistory;
+    private String contactNumber;
+    private String address;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -31,56 +27,20 @@ public class Patient {
         this.patientId = patientId;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public int getAge() {
+        return age;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getGender() {
@@ -91,20 +51,20 @@ public class Patient {
         this.gender = gender;
     }
 
-    public String getAllergies() {
-        return allergies;
+    public String getContactNumber() {
+        return contactNumber;
     }
 
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 
-    public String getMedicalHistory() {
-        return medicalHistory;
+    public String getAddress() {
+        return address;
     }
 
-    public void setMedicalHistory(String medicalHistory) {
-        this.medicalHistory = medicalHistory;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public LocalDateTime getCreatedAt() {

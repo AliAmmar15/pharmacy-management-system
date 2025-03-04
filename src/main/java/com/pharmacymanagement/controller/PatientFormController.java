@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PatientFormController {
     private static final Logger logger = LoggerFactory.getLogger(PatientFormController.class);
@@ -16,13 +16,11 @@ public class PatientFormController {
 
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
-    @FXML private DatePicker dateOfBirthPicker;
-    @FXML private ComboBox<String> genderComboBox;
-    @FXML private TextField phoneNumberField;
     @FXML private TextField emailField;
-    @FXML private TextField addressField;
-    @FXML private TextArea allergiesArea;
-    @FXML private TextArea medicalHistoryArea;
+    @FXML private TextField phoneNumberField;
+    @FXML private DatePicker dateOfBirthPicker;
+    @FXML private TextArea allergiesField;
+    @FXML private TextArea medicalHistoryField;
     @FXML private Label errorLabel;
 
     private Patient patient;
@@ -31,29 +29,15 @@ public class PatientFormController {
 
     @FXML
     public void initialize() {
-        setupGenderComboBox();
         setupValidation();
         errorLabel.setVisible(false);
     }
 
-    private void setupGenderComboBox() {
-        genderComboBox.getItems().addAll("Male", "Female", "Other");
-    }
-
     private void setupValidation() {
-        // Phone number validation
+        // Integer validation for phone number
         phoneNumberField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*([\\-()])?\\d*")) {
+            if (!newVal.matches("\\d*")) {
                 phoneNumberField.setText(oldVal);
-            }
-        });
-
-        // Prevent future dates in date of birth
-        dateOfBirthPicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                setDisable(empty || date.isAfter(LocalDate.now()));
             }
         });
     }
@@ -68,13 +52,11 @@ public class PatientFormController {
         if (patient != null) {
             firstNameField.setText(patient.getFirstName());
             lastNameField.setText(patient.getLastName());
-            dateOfBirthPicker.setValue(patient.getDateOfBirth());
-            genderComboBox.setValue(patient.getGender());
-            phoneNumberField.setText(patient.getPhoneNumber());
             emailField.setText(patient.getEmail());
-            addressField.setText(patient.getAddress());
-            allergiesArea.setText(patient.getAllergies());
-            medicalHistoryArea.setText(patient.getMedicalHistory());
+            phoneNumberField.setText(patient.getPhoneNumber());
+            dateOfBirthPicker.setValue(patient.getDateOfBirth());
+            allergiesField.setText(patient.getAllergies());
+            medicalHistoryField.setText(patient.getMedicalHistory());
         }
     }
 
@@ -103,7 +85,7 @@ public class PatientFormController {
             if (onSaveCallback != null) {
                 onSaveCallback.run();
             }
-            
+
             closeDialog();
         } catch (Exception e) {
             logger.error("Error saving patient", e);
@@ -114,13 +96,12 @@ public class PatientFormController {
     private void updatePatientFromFields(Patient patient) {
         patient.setFirstName(firstNameField.getText().trim());
         patient.setLastName(lastNameField.getText().trim());
-        patient.setDateOfBirth(dateOfBirthPicker.getValue());
-        patient.setGender(genderComboBox.getValue());
-        patient.setPhoneNumber(phoneNumberField.getText().trim());
         patient.setEmail(emailField.getText().trim());
-        patient.setAddress(addressField.getText().trim());
-        patient.setAllergies(allergiesArea.getText().trim());
-        patient.setMedicalHistory(medicalHistoryArea.getText().trim());
+        patient.setPhoneNumber(phoneNumberField.getText().trim());
+        patient.setDateOfBirth(dateOfBirthPicker.getValue());
+        patient.setAllergies(allergiesField.getText().trim());
+        patient.setMedicalHistory(medicalHistoryField.getText().trim());
+        patient.setUpdatedAt(LocalDateTime.now());
     }
 
     private boolean validateInput() {
@@ -134,14 +115,18 @@ public class PatientFormController {
             return false;
         }
 
+        if (emailField.getText().trim().isEmpty()) {
+            showError("Email is required");
+            return false;
+        }
+
         if (phoneNumberField.getText().trim().isEmpty()) {
             showError("Phone number is required");
             return false;
         }
 
-        String email = emailField.getText().trim();
-        if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            showError("Invalid email format");
+        if (dateOfBirthPicker.getValue() == null) {
+            showError("Date of birth is required");
             return false;
         }
 
