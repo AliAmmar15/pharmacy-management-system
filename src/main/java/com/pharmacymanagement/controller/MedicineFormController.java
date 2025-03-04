@@ -8,15 +8,13 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigDecimal;
 
 public class MedicineFormController {
     private static final Logger logger = LoggerFactory.getLogger(MedicineFormController.class);
     private final MedicineService medicineService = new MedicineService();
-    
+
     @FXML private TextField nameField;
     @FXML private TextField genericNameField;
     @FXML private TextField manufacturerField;
@@ -24,29 +22,44 @@ public class MedicineFormController {
     @FXML private TextField unitPriceField;
     @FXML private TextField stockQuantityField;
     @FXML private TextField minimumStockField;
-    @FXML private DatePicker expiryDatePicker;
     @FXML private TextField batchNumberField;
+    @FXML private DatePicker expiryDatePicker;
     @FXML private Label errorLabel;
 
     private Medicine medicine;
     private boolean isEditMode = false;
+    private Runnable onSaveCallback;
 
     @FXML
     public void initialize() {
-        // Initialize category combo box
-        List<String> categories = Arrays.asList(
-            "Tablets", "Capsules", "Syrups", "Injections", "Ointments",
-            "Drops", "Inhalers", "Supplements"
-        );
-        categoryComboBox.getItems().addAll(categories);
+        setupCategoryComboBox();
+        setupValidation();
+        errorLabel.setVisible(false);
+    }
 
-        // Add validation listeners
+    private void setupCategoryComboBox() {
+        categoryComboBox.getItems().addAll(
+            "Tablet",
+            "Capsule",
+            "Syrup",
+            "Injection",
+            "Cream",
+            "Ointment",
+            "Drops",
+            "Inhaler",
+            "Other"
+        );
+    }
+
+    private void setupValidation() {
+        // Numeric validation for price
         unitPriceField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*(\\.\\d*)?")) {
+            if (!newVal.matches("\\d*\\.?\\d*")) {
                 unitPriceField.setText(oldVal);
             }
         });
 
+        // Integer validation for quantities
         stockQuantityField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) {
                 stockQuantityField.setText(oldVal);
@@ -56,6 +69,15 @@ public class MedicineFormController {
         minimumStockField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) {
                 minimumStockField.setText(oldVal);
+            }
+        });
+
+        // Prevent past dates for expiry
+        expiryDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isBefore(LocalDate.now()));
             }
         });
     }
@@ -72,12 +94,16 @@ public class MedicineFormController {
             genericNameField.setText(medicine.getGenericName());
             manufacturerField.setText(medicine.getManufacturer());
             categoryComboBox.setValue(medicine.getCategory());
-            unitPriceField.setText(medicine.getUnitPrice().toString());
-            stockQuantityField.setText(medicine.getStockQuantity().toString());
-            minimumStockField.setText(medicine.getMinimumStockLevel().toString());
-            expiryDatePicker.setValue(medicine.getExpiryDate());
+            unitPriceField.setText(String.valueOf(medicine.getUnitPrice()));
+            stockQuantityField.setText(String.valueOf(medicine.getStockQuantity()));
+            minimumStockField.setText(String.valueOf(medicine.getMinimumStockLevel()));
             batchNumberField.setText(medicine.getBatchNumber());
+            expiryDatePicker.setValue(medicine.getExpiryDate());
         }
+    }
+
+    public void setOnSaveCallback(Runnable callback) {
+        this.onSaveCallback = callback;
     }
 
     @FXML
@@ -98,6 +124,10 @@ public class MedicineFormController {
                 logger.info("Medicine added successfully: {}", medicineToSave.getName());
             }
 
+            if (onSaveCallback != null) {
+                onSaveCallback.run();
+            }
+            
             closeDialog();
         } catch (Exception e) {
             logger.error("Error saving medicine", e);
@@ -110,16 +140,21 @@ public class MedicineFormController {
         medicine.setGenericName(genericNameField.getText().trim());
         medicine.setManufacturer(manufacturerField.getText().trim());
         medicine.setCategory(categoryComboBox.getValue());
-        medicine.setUnitPrice(new BigDecimal(unitPriceField.getText()));
-        medicine.setStockQuantity(Integer.parseInt(stockQuantityField.getText()));
-        medicine.setMinimumStockLevel(Integer.parseInt(minimumStockField.getText()));
-        medicine.setExpiryDate(expiryDatePicker.getValue());
+        medicine.setUnitPrice(new BigDecimal(unitPriceField.getText().trim()));
+        medicine.setStockQuantity(Integer.parseInt(stockQuantityField.getText().trim()));
+        medicine.setMinimumStockLevel(Integer.parseInt(minimumStockField.getText().trim()));
         medicine.setBatchNumber(batchNumberField.getText().trim());
+        medicine.setExpiryDate(expiryDatePicker.getValue());
     }
 
     private boolean validateInput() {
         if (nameField.getText().trim().isEmpty()) {
             showError("Medicine name is required");
+            return false;
+        }
+
+        if (genericNameField.getText().trim().isEmpty()) {
+            showError("Generic name is required");
             return false;
         }
 
@@ -135,12 +170,6 @@ public class MedicineFormController {
 
         if (minimumStockField.getText().trim().isEmpty()) {
             showError("Minimum stock level is required");
-            return false;
-        }
-
-        if (expiryDatePicker.getValue() != null && 
-            expiryDatePicker.getValue().isBefore(LocalDate.now())) {
-            showError("Expiry date cannot be in the past");
             return false;
         }
 

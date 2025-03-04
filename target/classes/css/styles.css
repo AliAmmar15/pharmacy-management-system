@@ -160,3 +160,44 @@
     -fx-background-color: #ecf0f1;
     -fx-padding: 5 10;
 }
+
+.alert-box {
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-min-width: 200;
+}
+
+.alert-warning {
+    -fx-background-color: #fff3cd;
+    -fx-border-color: #ffeeba;
+}
+
+.alert-danger {
+    -fx-background-color: #f8d7da;
+    -fx-border-color: #f5c6cb;
+}
+
+.alert-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.alert-content {
+    -fx-font-size: 12px;
+}
+
+/* Table Styles for Stock Level */
+.table-row-cell:low-stock {
+    -fx-background-color: #fff3cd;
+}
+
+.table-row-cell:expiring-soon {
+    -fx-background-color: #f8d7da;
+}
+
+/* Price Field */
+.price-field {
+    -fx-alignment: CENTER-RIGHT;
+}

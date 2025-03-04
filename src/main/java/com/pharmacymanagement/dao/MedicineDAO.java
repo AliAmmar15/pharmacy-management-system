@@ -5,9 +5,9 @@ import com.pharmacymanagement.util.DatabaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public class MedicineDAO {
     private static final Logger logger = LoggerFactory.getLogger(MedicineDAO.class);
 
     public Medicine save(Medicine medicine) {
-        String sql = "INSERT INTO medicine_inventory (name, generic_name, manufacturer, category, " +
+        String sql = "INSERT INTO medicines (name, generic_name, manufacturer, category, " +
                     "unit_price, stock_quantity, minimum_stock_level, expiry_date, batch_number) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -53,69 +53,8 @@ public class MedicineDAO {
         }
     }
 
-    public Optional<Medicine> findById(Long id) {
-        String sql = "SELECT * FROM medicine_inventory WHERE medicine_id = ?";
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setLong(1, id);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return Optional.of(mapResultSetToMedicine(rs));
-            }
-
-            return Optional.empty();
-
-        } catch (SQLException e) {
-            logger.error("Error finding medicine by ID", e);
-            throw new RuntimeException("Error finding medicine by ID", e);
-        }
-    }
-
-    public List<Medicine> findAll() {
-        String sql = "SELECT * FROM medicine_inventory ORDER BY name";
-        List<Medicine> medicines = new ArrayList<>();
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                medicines.add(mapResultSetToMedicine(rs));
-            }
-
-            return medicines;
-
-        } catch (SQLException e) {
-            logger.error("Error finding all medicines", e);
-            throw new RuntimeException("Error finding all medicines", e);
-        }
-    }
-
-    public List<Medicine> findLowStock() {
-        String sql = "SELECT * FROM medicine_inventory WHERE stock_quantity <= minimum_stock_level";
-        List<Medicine> medicines = new ArrayList<>();
-
-        try (Connection conn = DatabaseUtil.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                medicines.add(mapResultSetToMedicine(rs));
-            }
-
-            return medicines;
-
-        } catch (SQLException e) {
-            logger.error("Error finding low stock medicines", e);
-            throw new RuntimeException("Error finding low stock medicines", e);
-        }
-    }
-
     public void update(Medicine medicine) {
-        String sql = "UPDATE medicine_inventory SET name = ?, generic_name = ?, manufacturer = ?, " +
+        String sql = "UPDATE medicines SET name = ?, generic_name = ?, manufacturer = ?, " +
                     "category = ?, unit_price = ?, stock_quantity = ?, minimum_stock_level = ?, " +
                     "expiry_date = ?, batch_number = ?, updated_at = CURRENT_TIMESTAMP " +
                     "WHERE medicine_id = ?";
@@ -144,8 +83,49 @@ public class MedicineDAO {
         }
     }
 
+    public Optional<Medicine> findById(Long id) {
+        String sql = "SELECT * FROM medicines WHERE medicine_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(mapResultSetToMedicine(rs));
+            }
+
+            return Optional.empty();
+
+        } catch (SQLException e) {
+            logger.error("Error finding medicine by ID", e);
+            throw new RuntimeException("Error finding medicine by ID", e);
+        }
+    }
+
+    public List<Medicine> findAll() {
+        String sql = "SELECT * FROM medicines ORDER BY name";
+        List<Medicine> medicines = new ArrayList<>();
+
+        try (Connection conn = DatabaseUtil.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                medicines.add(mapResultSetToMedicine(rs));
+            }
+
+            return medicines;
+
+        } catch (SQLException e) {
+            logger.error("Error finding all medicines", e);
+            throw new RuntimeException("Error finding all medicines", e);
+        }
+    }
+
     public void delete(Long id) {
-        String sql = "DELETE FROM medicine_inventory WHERE medicine_id = ?";
+        String sql = "DELETE FROM medicines WHERE medicine_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -177,8 +157,16 @@ public class MedicineDAO {
         }
         
         medicine.setBatchNumber(rs.getString("batch_number"));
-        medicine.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        medicine.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        if (createdAt != null) {
+            medicine.setCreatedAt(createdAt.toLocalDateTime());
+        }
+        
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (updatedAt != null) {
+            medicine.setUpdatedAt(updatedAt.toLocalDateTime());
+        }
         
         return medicine;
     }

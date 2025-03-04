@@ -11,14 +11,13 @@ public class Medicine {
     private String manufacturer;
     private String category;
     private BigDecimal unitPrice;
-    private Integer stockQuantity;
-    private Integer minimumStockLevel;
+    private int stockQuantity;
+    private int minimumStockLevel = 10; // Default value
     private LocalDate expiryDate;
     private String batchNumber;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Constructor
     public Medicine() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -73,19 +72,19 @@ public class Medicine {
         this.unitPrice = unitPrice;
     }
 
-    public Integer getStockQuantity() {
+    public int getStockQuantity() {
         return stockQuantity;
     }
 
-    public void setStockQuantity(Integer stockQuantity) {
+    public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
     }
 
-    public Integer getMinimumStockLevel() {
+    public int getMinimumStockLevel() {
         return minimumStockLevel;
     }
 
-    public void setMinimumStockLevel(Integer minimumStockLevel) {
+    public void setMinimumStockLevel(int minimumStockLevel) {
         this.minimumStockLevel = minimumStockLevel;
     }
 
@@ -121,18 +120,7 @@ public class Medicine {
         this.updatedAt = updatedAt;
     }
 
-    // Helper methods
     public boolean isLowStock() {
         return stockQuantity <= minimumStockLevel;
-    }
-
-    public boolean isExpired() {
-        return expiryDate != null && expiryDate.isBefore(LocalDate.now());
-    }
-
-    public boolean isNearExpiry(int daysThreshold) {
-        if (expiryDate == null) return false;
-        LocalDate warningDate = LocalDate.now().plusDays(daysThreshold);
-        return expiryDate.isBefore(warningDate);
     }
 }
